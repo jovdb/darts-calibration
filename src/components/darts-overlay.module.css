@@ -1,0 +1,25 @@
+.darts-overlay {
+  --number: "";
+  --spokes: "";
+  --stroke-color: black;
+  --stroke-width: 3;
+}
+
+.darts-overlay__numbers {
+  display: var(--numbers);
+  fill: none;
+  stroke: var(--stroke-color);
+  stroke-width: var(--stroke-width);
+}
+
+.darts-overlay__rings {
+  fill: none;
+  stroke: var(--stroke-color);
+  stroke-width: var(--stroke-width);
+}
+
+.darts-overlay__spokes {
+  display: var(--spokes);
+  stroke: var(--stroke-color);
+  stroke-width: var(--stroke-width);
+}

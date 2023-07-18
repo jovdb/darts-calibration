@@ -2,24 +2,30 @@
 import styles from "./darts-overlay.module.css";
 import { CSSProperties } from "react";
 
-export const normalizedControlPoints =
+/** unit to image size control points on dart overlay */
+export const unitControlPointsToOverlay =
   typeof DOMMatrix !== "undefined"
-    ? [
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-      ].map((point) => {
-        const m = new DOMMatrix()
-          // unit to image size
-          .translate(0.5, 0.5)
-          .scale(0.531)
-          .rotate(36)
-          .translate(-0.5, -0.5);
-        const { x, y } = m.transformPoint({ x: point[0], y: point[1] });
-        return [x, y];
-      })
-    : [];
+    ? new DOMMatrix()
+        .translate(0.5, 0.5)
+        .scale(0.531)
+        .rotate(36)
+        .translate(-0.5, -0.5)
+    : undefined;
+
+export const normalizedControlPoints = unitControlPointsToOverlay
+  ? [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+    ].map((point) => {
+      const { x, y } = unitControlPointsToOverlay.transformPoint({
+        x: point[0],
+        y: point[1],
+      });
+      return [x, y];
+    })
+  : [];
 
 export function DartsOverlay({
   width,

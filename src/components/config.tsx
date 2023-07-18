@@ -14,6 +14,7 @@ export default function Config({
   onColorChange,
   showNumbers,
   onShowNumbersChange,
+  resetControlPoints,
 }: {
   style: React.CSSProperties;
   imageUrl: string;
@@ -22,6 +23,7 @@ export default function Config({
   onColorChange: (color: string) => void;
   showNumbers: boolean;
   onShowNumbersChange: (showNumbers: boolean) => void;
+  resetControlPoints: () => void;
 }) {
   return (
     <fieldset style={style}>
@@ -92,7 +94,7 @@ export default function Config({
               <button
                 style={{ marginTop: "0.5rem" }}
                 onClick={() => {
-                  // resetControlPoints();
+                  resetControlPoints();
                 }}
               >
                 Reset

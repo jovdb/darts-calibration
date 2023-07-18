@@ -1,8 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { unitControlPointsToOverlay } from "@/components/darts-overlay";
 import Config, { sampleImages } from "@/components/config";
+import { ControlPointsDots } from "@/components/control-points-dots";
 import { DartsOverlay } from "@/components/darts-overlay";
+import { useControlPoints } from "@/hooks/use-control-points";
 import { useState } from "react";
 
 export default function Home() {
@@ -11,6 +14,15 @@ export default function Home() {
   const [imageUrl, setImageUrl] = useState(sampleImages[0]);
   const [color, setColor] = useState("Yellow");
   const [showNumbers, setShowNumbers] = useState(false);
+  const {
+    controlPoints,
+    setControlPoints,
+    imageMatrix3d,
+    overlayMatrix3d,
+    resetControlPoints,
+  } = useControlPoints(viewWidth, viewWidth, unitControlPointsToOverlay);
+
+  const [, setControlPointDragging] = useState(-1);
 
   return (
     <main>
@@ -25,6 +37,7 @@ export default function Home() {
           onColorChange={setColor}
           showNumbers={showNumbers}
           onShowNumbersChange={setShowNumbers}
+          resetControlPoints={resetControlPoints}
           style={{
             width: 470,
             display: "inline-block",
@@ -48,20 +61,31 @@ export default function Home() {
           src={imageUrl}
           width={viewWidth}
           height="auto"
-          style={{ userSelect: "none" }}
+          style={{
+            userSelect: "none",
+          }}
           draggable={false}
         />
         <DartsOverlay
-          width="400"
+          width={viewWidth.toString()}
           style={{
             top: 0,
             left: 0,
             position: "absolute",
             pointerEvents: "none",
+            transform: overlayMatrix3d,
             transformOrigin: "0 0",
           }}
           hideNumbers={!showNumbers}
           color={color}
+        />
+
+        <ControlPointsDots
+          controlPoints={controlPoints}
+          onChange={(newControlPoints, controlPointIndex) => {
+            if (controlPointIndex >= 0) setControlPoints(newControlPoints);
+            setControlPointDragging(controlPointIndex);
+          }}
         />
       </div>
     </main>

@@ -2,6 +2,8 @@
 // https://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
 // https://codepen.io/hlarken/details/doRaeM
 
+import { Matrix } from "./matrix";
+
 export type ControlPoint = [x: number, y: number];
 export type ControlPoints = [
   topLeft: ControlPoint,
@@ -19,7 +21,7 @@ export function getProjectionMatrix(from: ControlPoints, to: ControlPoints) {
   }
 
   const B = []; //8x1
-  for (var i = 0; i < 4; i++) {
+  for (let i = 0; i < 4; i++) {
     B.push(to[i][0]);
     B.push(to[i][1]);
   }
@@ -36,21 +38,13 @@ export function getProjectionMatrix(from: ControlPoints, to: ControlPoints) {
 
   // transpose matrix
   const transposed: number[] = [];
-  for (var i = 0; i < 4; i++) {
-    for (var j = 0; j < 4; j++) {
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
       transposed.push(H[j][i]);
     };
   };
 
-  return {
-    /** math matrix */
-    columnMajorMatrix: H,
-    rowMajorMatrix: transposed,
-    domMatrix: new DOMMatrix(transposed), // Use not available on server
-
-    /** CSS matrix3d */
-    cssMatrix3d: `matrix3d(${transposed.join(',')})`,
-  };
+  return new Matrix(...transposed); // Use not available on server
 }
 
 // https://github.com/dnd-team/numeric-solve-js/blob/master/numeric-solve.js

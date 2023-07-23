@@ -1,5 +1,6 @@
 import type { ControlPoint, ControlPoints } from "@/components/control-points-dots";
-import { getProjectionMatrix } from "@/plane-perspective";
+import { Matrix } from "@/math/matrix";
+import { getProjectionMatrix } from "@/math/plane-perspective";
 import { useMemo, useState } from "react";
 
 const unitControlPoints = [
@@ -12,32 +13,34 @@ const unitControlPoints = [
 export function useControlPoints(
     dartOverlaySize: number,
     imageSize: number,
-    unitControlPointsToOverlay: DOMMatrix
+    unitControlPointsToOverlay: Matrix,
 ) {
-    const initialControlPointsScale = 0.3;
-    const scaleDartsOverlayToDoubleRing = 0.531;
-
-    const controlPointsOnImageMatrix = new DOMMatrix()
-        .scale(dartOverlaySize) // scale back from unit to dart size
-        .multiply(unitControlPointsToOverlay)
-        .scale(1 / dartOverlaySize); // Convert to unit
+    const controlPointsOnImageMatrix = unitControlPointsToOverlay
+        ? new Matrix()
+            .scale(dartOverlaySize) // scale back from unit to dart size
+            .multiply(unitControlPointsToOverlay)
+            .scale(1 / dartOverlaySize) // Convert to unit
+        : undefined;
 
     // Matrix to move control points from corner to initial start position
-    const initialControlPointsMatrix = new DOMMatrix()
+    const initialControlPointsMatrix = new Matrix()
         // unit to image size
         .scale(imageSize)
-        .translate(0.5, 0.2)
-        .scale(0.6)
-        .translate(-0.5, -0.2)
-        .multiply(unitControlPointsToOverlay)
+        .translate(0.5, 0.3)
+        .scale(0.3)
+        .rotate(36)
+        .translate(-0.5, -0.5)
+    // .multiply(unitControlPointsToOverlay)
 
-    const initialControlPoints = unitControlPoints.map((point) => {
-        const p = initialControlPointsMatrix.transformPoint({
-            x: point[0],
-            y: point[1],
-        });
-        return [p.x, p.y] as ControlPoint;
-    }) as ControlPoints;
+    const initialControlPoints = initialControlPointsMatrix
+        ? unitControlPoints.map((point) => {
+            const p = initialControlPointsMatrix.transformPoint({
+                x: point[0],
+                y: point[1],
+            });
+            return [p.x, p.y] as ControlPoint;
+        }) as ControlPoints
+        : unitControlPoints;
 
     function resetControlPoints() {
         setControlPoints(initialControlPoints);
@@ -45,12 +48,9 @@ export function useControlPoints(
 
     const [controlPoints, setControlPoints] = useState(initialControlPoints);
 
-    const overlayMatrix = useMemo(() => {
+    const overlayMatrix3d = useMemo(() => {
         const newControlPoints = controlPoints.map((point) => {
-            const p = new DOMMatrix().transformPoint({
-                x: point[0],
-                y: point[1],
-            });
+            const p = new Matrix().transformPoint({ x: point[0], y: point[1] });
             return [p.x, p.y] as ControlPoint;
         }) as ControlPoints;
 
@@ -62,14 +62,11 @@ export function useControlPoints(
                 [0, dartOverlaySize],
             ],
             newControlPoints
-        ).domMatrix;
-
-        return projectionMatrix.multiply(controlPointsOnImageMatrix.inverse());
+        );
+        return controlPointsOnImageMatrix && projectionMatrix.multiply(controlPointsOnImageMatrix.inverse());
     }, [controlPoints, controlPointsOnImageMatrix, dartOverlaySize]);
 
-    const overlayMatrix3d = useMemo(() => overlayMatrix.toString(), [overlayMatrix]);
-
-    const imageMatrix3d = useMemo(() => overlayMatrix.inverse().toString(), [overlayMatrix]);
+    const imageMatrix3d = useMemo(() => overlayMatrix3d?.inverse(), [overlayMatrix3d]);
 
     return {
         controlPoints,

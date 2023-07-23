@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { unitControlPointsToOverlay } from "@/components/darts-overlay";
+import {
+  DartsOverlay,
+  unitControlPointsToOverlay,
+} from "@/components/darts-overlay";
 import Config, { sampleImages } from "@/components/config";
 import { ControlPointsDots } from "@/components/control-points-dots";
-import { DartsOverlay } from "@/components/darts-overlay";
 import { useControlPoints } from "@/hooks/use-control-points";
 import { useState } from "react";
 
@@ -17,11 +19,9 @@ export default function Home() {
   const {
     controlPoints,
     setControlPoints,
-    imageMatrix3d,
     overlayMatrix3d,
     resetControlPoints,
   } = useControlPoints(viewWidth, viewWidth, unitControlPointsToOverlay);
-
   const [, setControlPointDragging] = useState(-1);
 
   return (
@@ -73,7 +73,7 @@ export default function Home() {
             left: 0,
             position: "absolute",
             pointerEvents: "none",
-            transform: overlayMatrix3d,
+            transform: overlayMatrix3d?.toCssString(),
             transformOrigin: "0 0",
           }}
           hideNumbers={!showNumbers}

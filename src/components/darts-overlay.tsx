@@ -1,16 +1,15 @@
 "use client";
 import styles from "./darts-overlay.module.css";
 import { CSSProperties } from "react";
+import { Matrix } from "../math/matrix";
+
 
 /** unit to image size control points on dart overlay */
-export const unitControlPointsToOverlay =
-  typeof DOMMatrix !== "undefined"
-    ? new DOMMatrix()
-        .translate(0.5, 0.5)
-        .scale(0.531)
-        .rotate(36)
-        .translate(-0.5, -0.5)
-    : undefined;
+export const unitControlPointsToOverlay = new Matrix()
+  .translate(0.5, 0.5)
+  .scale(0.531)
+  .rotate(36)
+  .translate(-0.5, -0.5);
 
 export const normalizedControlPoints = unitControlPointsToOverlay
   ? [

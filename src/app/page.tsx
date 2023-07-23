@@ -86,6 +86,7 @@ export default function Home() {
             if (controlPointIndex >= 0) setControlPoints(newControlPoints);
             setControlPointDragging(controlPointIndex);
           }}
+          color={color}
         />
       </div>
       <div

@@ -1,5 +1,6 @@
 "use client";
 
+import { dot } from "node:test/reporters";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ControlPoint = [x: number, y: number];
@@ -12,13 +13,17 @@ export type ControlPoints = [
 
 export function ControlPointDot({
   point,
+  title,
+  color,
   onChange,
 }: {
   point: ControlPoint;
+  color: string;
+  title: string;
   onChange: (point: ControlPoint, isDragging: boolean) => void;
 }) {
-  const dotSize = 12;
-  const borderSize = 2;
+  const dotSize = 14;
+  const borderSize = 3;
 
   const [isDragging, setIsDragging] = useState(false);
   const dotElRef = useRef<HTMLDivElement>(null);
@@ -57,54 +62,89 @@ export function ControlPointDot({
   return (
     <div
       ref={dotElRef}
-      onMouseDown={(e) => {
-        setIsDragging(true);
-        onChange(point, true);
-      }}
-      onTouchStart={(e) => {
-        setIsDragging(true);
-        onChange(point, true);
-      }}
-      onMouseUp={(e) => {
-        setIsDragging(false);
-        onChange(point, false);
-      }}
-      onTouchEnd={(e) => {
-        setIsDragging(false);
-        onChange(point, false);
-      }}
-      onTouchCancel={(e) => {
-        setIsDragging(false);
-        onChange(point, false);
-      }}
       style={{
-        width: dotSize,
-        height: dotSize,
-        backgroundColor: "white",
+        width: 0,
+        height: 0,
+        //backgroundColor: "white",
         position: "absolute",
         left: point[0],
         top: point[1],
-        borderRadius: "50%",
-        border: `${borderSize}px solid blue`,
-        marginLeft: -dotSize / 2,
-        marginTop: -dotSize / 2,
-        cursor: "pointer",
+        color,
       }}
-    ></div>
+    >
+      <svg
+        width={dotSize + borderSize}
+        height={dotSize + borderSize}
+        onMouseDown={(e) => {
+          setIsDragging(true);
+          onChange(point, true);
+        }}
+        onTouchStart={(e) => {
+          setIsDragging(true);
+          onChange(point, true);
+        }}
+        onMouseUp={(e) => {
+          setIsDragging(false);
+          onChange(point, false);
+        }}
+        onTouchEnd={(e) => {
+          setIsDragging(false);
+          onChange(point, false);
+        }}
+        onTouchCancel={(e) => {
+          setIsDragging(false);
+          onChange(point, false);
+        }}
+        style={{
+          position: "absolute",
+          transform: `translate(${(dotSize + borderSize) / -2}px, ${
+            (dotSize + borderSize) / -2
+          }px)`,
+          cursor: "pointer",
+        }}
+      >
+        <circle
+          cx={dotSize / 2 + borderSize / 2}
+          cy={dotSize / 2 + borderSize / 2}
+          r={dotSize / 2}
+          stroke={color}
+          strokeWidth={borderSize}
+          fill="transparent"
+        />
+      </svg>
+      <div
+        style={{
+          transform: `translate(-50%, -${dotSize + 14}px)`,
+          padding: 2,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          fontFamily: "Arial",
+          fontSize: 10,
+          textAlign: "center",
+          whiteSpace: "nowrap",
+          position: "absolute",
+        }}
+      >
+        {title}
+      </div>
+    </div>
   );
 }
 
 export function ControlPointsDots({
   controlPoints,
   onChange,
+  color,
 }: {
   controlPoints: ControlPoints;
   onChange: (controlPoints: ControlPoints, controlPointIndex: number) => void;
+  color: string;
 }) {
   return (
     <>
       <ControlPointDot
         point={controlPoints[0]}
+        title="5 - 20"
+        color={color}
         onChange={(controlPoint, isDragging) => {
           if (!isDragging) {
             onChange(controlPoints, -1);
@@ -117,6 +157,8 @@ export function ControlPointsDots({
       />
       <ControlPointDot
         point={controlPoints[1]}
+        title="13 - 6"
+        color={color}
         onChange={(controlPoint, isDragging) => {
           if (!isDragging) {
             onChange(controlPoints, -1);
@@ -129,6 +171,8 @@ export function ControlPointsDots({
       />
       <ControlPointDot
         point={controlPoints[2]}
+        title="3 - 17"
+        color={color}
         onChange={(controlPoint, isDragging) => {
           if (!isDragging) {
             onChange(controlPoints, -1);
@@ -141,6 +185,8 @@ export function ControlPointsDots({
       />
       <ControlPointDot
         point={controlPoints[3]}
+        title="11 - 8"
+        color={color}
         onChange={(controlPoint, isDragging) => {
           if (!isDragging) {
             onChange(controlPoints, -1);

@@ -41,7 +41,7 @@ export function DartsOverlay({
   color?: string;
   style?: CSSProperties;
 }) {
-  const strokeWidth = 2;
+  const strokeWidth = typeof devicePixelRatio !== "undefined" ? devicePixelRatio : 1;
   const strokeColor = color;
 
   return (

@@ -19,7 +19,7 @@ export default function Home() {
   const {
     controlPoints,
     setControlPoints,
-    overlayMatrix3d,
+    imageToCircleMatrix,
     resetControlPoints,
   } = useControlPoints(viewWidth, viewWidth, unitControlPointsToOverlay);
   const [, setControlPointDragging] = useState(-1);
@@ -73,7 +73,7 @@ export default function Home() {
             left: 0,
             position: "absolute",
             pointerEvents: "none",
-            transform: overlayMatrix3d?.toCssString(),
+            transform: imageToCircleMatrix?.inverse()?.toCssString(),
             transformOrigin: "0 0",
           }}
           hideNumbers={!showNumbers}
@@ -87,6 +87,49 @@ export default function Home() {
             setControlPointDragging(controlPointIndex);
           }}
         />
+      </div>
+      <div
+        style={{
+          display: "inline-block",
+          verticalAlign: "top",
+        }}
+      >
+        <div
+          style={{
+            width: viewWidth,
+            height: viewWidth,
+            backgroundColor: "#f8f8f8",
+            border: "1px solid #bbb",
+            position: "relative",
+            overflow: "hidden",
+            display: "inline-block",
+            borderRadius: "50%",
+          }}
+        >
+          <img
+            src={imageUrl}
+            width={viewWidth}
+            height="auto"
+            alt=""
+            style={{
+              position: "absolute",
+              userSelect: "none",
+              // userDrag: "none",
+              transform: imageToCircleMatrix?.toCssString(),
+              transformOrigin: "0 0",
+            }}
+            draggable={false}
+          />
+          <DartsOverlay
+            width={viewWidth.toString()}
+            style={{
+              position: "absolute",
+              pointerEvents: "none",
+            }}
+            hideNumbers
+            color={color}
+          />
+        </div>
       </div>
     </main>
   );

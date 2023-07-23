@@ -48,7 +48,7 @@ export function useControlPoints(
 
     const [controlPoints, setControlPoints] = useState(initialControlPoints);
 
-    const overlayMatrix3d = useMemo(() => {
+    const imageToCircleMatrix = useMemo(() => {
         const newControlPoints = controlPoints.map((point) => {
             const p = new Matrix().transformPoint({ x: point[0], y: point[1] });
             return [p.x, p.y] as ControlPoint;
@@ -63,16 +63,14 @@ export function useControlPoints(
             ],
             newControlPoints
         );
-        return controlPointsOnImageMatrix && projectionMatrix.multiply(controlPointsOnImageMatrix.inverse());
+        return controlPointsOnImageMatrix && projectionMatrix.multiply(controlPointsOnImageMatrix.inverse()).inverse();
     }, [controlPoints, controlPointsOnImageMatrix, dartOverlaySize]);
-
-    const imageMatrix3d = useMemo(() => overlayMatrix3d?.inverse(), [overlayMatrix3d]);
 
     return {
         controlPoints,
         setControlPoints,
         resetControlPoints,
-        overlayMatrix3d,
-        imageMatrix3d,
+        /** Matrix the image with the perspective dartboard to a perfect circle dartboard image */
+        imageToCircleMatrix,
     };
 }

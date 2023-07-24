@@ -63,7 +63,7 @@ export function useControlPoints(
             ],
             newControlPoints
         );
-        return controlPointsOnImageMatrix && projectionMatrix.multiply(controlPointsOnImageMatrix.inverse()).inverse();
+        return projectionMatrix.multiply(controlPointsOnImageMatrix?.inverse()).inverse();
     }, [controlPoints, controlPointsOnImageMatrix, dartOverlaySize]);
 
     return {

@@ -198,16 +198,18 @@ export class Matrix {
                 */
     };
 
-    static multiply(...ms: Matrix[]): Matrix {
+    static multiply(...ms: (Matrix | null | undefined)[]): Matrix {
         if (ms.length === 0) return Matrix.identity;
-        if (ms.length === 1) return ms[0];
+        if (ms.length === 1) return ms[0] || Matrix.identity;
         if (ms.length === 2) {
             const m: number[] = [];
+            const m0 = ms[0] || Matrix.identity;
+            const m1 = ms[1] || Matrix.identity;
             for (let j = 0; j < 4; j++) {
                 for (let i = 0; i < 4; i++) {
                     let value = 0;
                     for (let k = 0; k < 4; k++) {
-                        value += ms[0].values[k * 4 + i] * ms[1].values[j * 4 + k];
+                        value += m0.values[k * 4 + i] * m1.values[j * 4 + k];
                     }
                     m[j * 4 + i] = value;
                 }
@@ -217,7 +219,7 @@ export class Matrix {
         }
 
         // Recursion or reduce?
-        return ms.slice(1).reduce((prev, next) => Matrix.multiply(prev, next), ms[0]);
+        return ms.slice(1).reduce<Matrix>((prev, next) => Matrix.multiply(prev, next), ms[0] || Matrix.identity);
     }
 
     static areSimilar(m1: Matrix, m2: Matrix, epsilon = Number.EPSILON) {
@@ -296,7 +298,7 @@ export class Matrix {
         return { x: newX, y: newY, z: newZ, w: newW };
     }
 
-    public multiply(...m: Matrix[]) {
+    public multiply(...m: (Matrix | null | undefined)[]) {
         return Matrix.multiply(this, ...m);
     }
 

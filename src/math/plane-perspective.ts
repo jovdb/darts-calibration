@@ -49,7 +49,7 @@ export function getProjectionMatrix(from: ControlPoints, to: ControlPoints) {
 
 // https://github.com/dnd-team/numeric-solve-js/blob/master/numeric-solve.js
 const solve = (function () {
-  function r(t, n, o, e) {
+  function r(t: any, n: any, o: any, e: any) {
     if (o === n.length - 1) return e(t);
     var f,
       u = n[o],
@@ -57,11 +57,11 @@ const solve = (function () {
     for (f = u - 1; f >= 0; --f) c[f] = r(t[f], n, o + 1, e);
     return c;
   }
-  function t(r) {
+  function t(r: any) {
     for (var t = []; 'object' == typeof r;) t.push(r.length), (r = r[0]);
     return t;
   }
-  function n(r) {
+  function n(r: any) {
     var n, o;
     return 'object' == typeof r
       ? ((n = r[0]),
@@ -70,17 +70,17 @@ const solve = (function () {
           : [r.length])
       : [];
   }
-  function o(r) {
+  function o(r: any) {
     var t,
       n = r.length,
       o = Array(n);
     for (t = n - 1; -1 !== t; --t) o[t] = r[t];
     return o;
   }
-  function e(t) {
+  function e(t: any) {
     return 'object' != typeof t ? t : r(t, n(t), 0, o);
   }
-  function f(r, t) {
+  function f(r: any, t: any) {
     t = t || !1;
     var n,
       o,
@@ -114,7 +114,7 @@ const solve = (function () {
     }
     return { LU: r, P: b };
   }
-  function u(r, t) {
+  function u(r: any, t: any) {
     var n,
       o,
       f,
@@ -142,7 +142,7 @@ const solve = (function () {
     return i;
   }
   var c = Math.abs;
-  return function (r, t, n) {
+  return function (r: any, t: any, n: any) {
     return u(f(r, n), t);
   };
 })();

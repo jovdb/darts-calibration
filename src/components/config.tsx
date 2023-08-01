@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 export const sampleImages = [
   "./sample1.jpg",
   "./sample2.jpg",
@@ -25,6 +27,7 @@ export default function Config({
   onShowNumbersChange: (showNumbers: boolean) => void;
   resetControlPoints: () => void;
 }) {
+  const fileRef = useRef<HTMLInputElement>(null);
   return (
     <fieldset style={style}>
       <table>
@@ -35,7 +38,11 @@ export default function Config({
               <select
                 style={{ width: 180 }}
                 onChange={(e) => {
-                  onImageUrlChange(e.target.value);
+                  if (e.target.value === "file") {
+                    fileRef.current?.click();
+                  } else {
+                    onImageUrlChange(e.target.value);
+                  }
                 }}
                 value={imageUrl}
               >
@@ -44,7 +51,33 @@ export default function Config({
                     {url}
                   </option>
                 ))}
+                <option key="file" value="file">
+                  Local file...
+                </option>
               </select>
+              <input
+                ref={fileRef}
+                type="file"
+                style={{ display: "none" }}
+                onChange={async (e) => {
+                  const inputEl = e.target as HTMLInputElement;
+                  const file = inputEl.files?.[0];
+                  if (!file) return;
+
+                  const base64Promise = new Promise<string>(
+                    (resolve, reject) => {
+                      const reader = new FileReader();
+                      reader.readAsDataURL(file);
+                      reader.onload = () => resolve(reader.result as string);
+                      reader.onerror = reject;
+                      reader.onabort = reject;
+                    }
+                  );
+
+                  const url = await base64Promise;
+                  url && onImageUrlChange(url);
+                }}
+              />
             </td>
           </tr>
           <tr>
